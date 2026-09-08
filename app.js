@@ -16,32 +16,74 @@ const DEFAULT_SETTINGS = {
   autoplay: true
 };
 
-// Demo legal public streams
-const DEMO_PLAYLIST_CONTENT = `#EXTM3U
-#EXTINF:-1 tvg-id="sintel" tvg-name="Sintel (Filme 4K)" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Sintel_poster.jpg/800px-Sintel_poster.jpg" group-title="Filmes Open Source",Sintel - Filme Curta Metragem
-https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4
-
-#EXTINF:-1 tvg-id="bigbuckbunny" tvg-name="Big Buck Bunny" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Big_buck_bunny_poster_big.jpg/800px-Big_buck_bunny_poster_big.jpg" group-title="Filmes Open Source",Big Buck Bunny (Animação)
-https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
-
-#EXTINF:-1 tvg-id="tears" tvg-name="Tears of Steel" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Tears_of_Steel_poster.jpg/800px-Tears_of_Steel_poster.jpg" group-title="Filmes Open Source",Tears of Steel (Sci-Fi)
-https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4
-
-#EXTINF:-1 tvg-id="elephantsdream" tvg-name="Elephants Dream" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Elephants_Dream_poster.jpg/800px-Elephants_Dream_poster.jpg" group-title="Filmes Open Source",Elephants Dream (Curta)
-https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4
-
-#EXTINF:-1 tvg-id="redbull" tvg-name="Red Bull TV" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Red_Bull_TV_logo.svg/512px-Red_Bull_TV_logo.svg.png" group-title="Esportes / Ao Vivo",Red Bull TV Live
-https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8
-
-#EXTINF:-1 tvg-id="nasa" tvg-name="NASA TV Live" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/512px-NASA_logo.svg.png" group-title="Documentários / Notícias",NASA TV Public Channel
-https://ntv1.akamaized.net/hls/live/2014075/NASA-NTV1-HLS/master.m3u8
-
-#EXTINF:-1 tvg-id="france24" tvg-name="France 24 English" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/France_24_logo.svg/512px-France_24_logo.svg.png" group-title="Documentários / Notícias",France 24 English News
-https://static.france24.com/live/F24_EN_LO_HLS/live_tv.m3u8
-
-#EXTINF:-1 tvg-id="dw-en" tvg-name="DW English Live" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Deutsche_Welle_symbol_2012.svg/512px-Deutsche_Welle_symbol_2012.svg.png" group-title="Documentários / Notícias",Deutsche Welle HD Live
-https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8
-`;
+    // Demo legal public streams
+    const DEMO_PLAYLIST_CONTENT = `#EXTM3U
+#EXTINF:-1 tvg-id="iptv-org-animation" tvg-name="Animation" tvg-logo="" group-title="Extras",Animation
+https://iptv-org.github.io/iptv/categories/animation.m3u
+#EXTINF:-1 tvg-id="iptv-org-auto" tvg-name="Auto" tvg-logo="" group-title="Extras",Auto
+https://iptv-org.github.io/iptv/categories/auto.m3u
+#EXTINF:-1 tvg-id="iptv-org-business" tvg-name="Business" tvg-logo="" group-title="Extras",Negócios
+https://iptv-org.github.io/iptv/categories/business.m3u
+#EXTINF:-1 tvg-id="iptv-org-classic" tvg-name="Classic" tvg-logo="" group-title="Extras",Clássico
+https://iptv-org.github.io/iptv/categories/classic.m3u
+#EXTINF:-1 tvg-id="iptv-org-comedy" tvg-name="Comedy" tvg-logo="" group-title="Extras",Comédia
+https://iptv-org.github.io/iptv/categories/comedy.m3u
+#EXTINF:-1 tvg-id="iptv-org-cooking" tvg-name="Cooking" tvg-logo="" group-title="Extras",Culinária
+https://iptv-org.github.io/iptv/categories/cooking.m3u
+#EXTINF:-1 tvg-id="iptv-org-culture" tvg-name="Culture" tvg-logo="" group-title="Extras",Cultura
+https://iptv-org.github.io/iptv/categories/culture.m3u
+#EXTINF:-1 tvg-id="iptv-org-documentary" tvg-name="Documentary" tvg-logo="" group-title="Extras",Documentário
+https://iptv-org.github.io/iptv/categories/documentary.m3u
+#EXTINF:-1 tvg-id="iptv-org-education" tvg-name="Education" tvg-logo="" group-title="Extras",Educação
+https://iptv-org.github.io/iptv/categories/education.m3u
+#EXTINF:-1 tvg-id="iptv-org-entertainment" tvg-name="Entertainment" tvg-logo="" group-title="Extras",Entretenimento
+https://iptv-org.github.io/iptv/categories/entertainment.m3u
+#EXTINF:-1 tvg-id="iptv-org-family" tvg-name="Family" tvg-logo="" group-title="Extras",Família
+https://iptv-org.github.io/iptv/categories/family.m3u
+#EXTINF:-1 tvg-id="iptv-org-general" tvg-name="General" tvg-logo="" group-title="Extras",Geral
+https://iptv-org.github.io/iptv/categories/general.m3u
+#EXTINF:-1 tvg-id="iptv-org-interactive" tvg-name="Interactive" tvg-logo="" group-title="Extras",Interativo
+https://iptv-org.github.io/iptv/categories/interactive.m3u
+#EXTINF:-1 tvg-id="iptv-org-kids" tvg-name="Kids" tvg-logo="" group-title="Extras",Crianças
+https://iptv-org.github.io/iptv/categories/kids.m3u
+#EXTINF:-1 tvg-id="iptv-org-legislative" tvg-name="Legislative" tvg-logo="" group-title="Extras",Legislativo
+https://iptv-org.github.io/iptv/categories/legislative.m3u
+#EXTINF:-1 tvg-id="iptv-org-lifestyle" tvg-name="Lifestyle" tvg-logo="" group-title="Extras",Estilo de vida
+https://iptv-org.github.io/iptv/categories/lifestyle.m3u
+#EXTINF:-1 tvg-id="iptv-org-movies" tvg-name="Movies" tvg-logo="" group-title="Extras",Filmes
+https://iptv-org.github.io/iptv/categories/movies.m3u
+#EXTINF:-1 tvg-id="iptv-org-music" tvg-name="Music" tvg-logo="" group-title="Extras",Música
+https://iptv-org.github.io/iptv/categories/music.m3u
+#EXTINF:-1 tvg-id="iptv-org-news" tvg-name="News" tvg-logo="" group-title="Extras",Notícias
+https://iptv-org.github.io/iptv/categories/news.m3u
+#EXTINF:-1 tvg-id="iptv-org-outdoor" tvg-name="Outdoor" tvg-logo="" group-title="Extras",Atividades ao ar livre
+https://iptv-org.github.io/iptv/categories/outdoor.m3u
+#EXTINF:-1 tvg-id="iptv-org-public" tvg-name="Public" tvg-logo="" group-title="Extras",Público
+https://iptv-org.github.io/iptv/categories/public.m3u
+#EXTINF:-1 tvg-id="iptv-org-relax" tvg-name="Relax" tvg-logo="" group-title="Extras",Relaxe
+https://iptv-org.github.io/iptv/categories/relax.m3u
+#EXTINF:-1 tvg-id="iptv-org-religious" tvg-name="Religious" tvg-logo="" group-title="Extras",Religioso
+https://iptv-org.github.io/iptv/categories/religious.m3u
+#EXTINF:-1 tvg-id="iptv-org-science" tvg-name="Science" tvg-logo="" group-title="Extras",Ciência
+https://iptv-org.github.io/iptv/categories/science.m3u
+#EXTINF:-1 tvg-id="iptv-org-series" tvg-name="Series" tvg-logo="" group-title="Extras",Séries
+https://iptv-org.github.io/iptv/categories/series.m3u
+#EXTINF:-1 tvg-id="iptv-org-shop" tvg-name="Shop" tvg-logo="" group-title="Extras",Loja
+https://iptv-org.github.io/iptv/categories/shop.m3u
+#EXTINF:-1 tvg-id="iptv-org-sports" tvg-name="Sports" tvg-logo="" group-title="Esportes",Esportes (IPTV-Org)
+https://iptv-org.github.io/iptv/categories/sports.m3u
+#EXTINF:-1 tvg-id="iptv-org-travel" tvg-name="Travel" tvg-logo="" group-title="Extras",Viagens
+https://iptv-org.github.io/iptv/categories/travel.m3u
+#EXTINF:-1 tvg-id="iptv-org-weather" tvg-name="Weather" tvg-logo="" group-title="Extras",Clima
+https://iptv-org.github.io/iptv/categories/weather.m3u
+#EXTINF:-1 tvg-id="iptv-org-undefined" tvg-name="Undefined" tvg-logo="" group-title="Extras",Indefinido
+https://iptv-org.github.io/iptv/categories/undefined.m3u
+#EXTINF:-1 tvg-id="iptv-org-por" tvg-name="Portuguese" tvg-logo="" group-title="Extras",Português (IPTV-Org)
+https://iptv-org.github.io/iptv/languages/por.m3u
+#EXTINF:-1 tvg-id="gist-extra" tvg-name="Conteúdo Adicional Gist" tvg-logo="" group-title="Extras",Conteúdo Adicional
+https://gist.githubusercontent.com/jfmarcos/2d9b72f11d50587694a42fb46acc8055/raw/
+#EXTINF:-1 tvg-id="gist-extra-2" tvg-name="Conteúdo Adicional Gist 2" tvg-logo="" group-title="Extras",Conteúdo Adicional 2
+https://gist.githubusercontent.com/cdsmatheus/5344135de637b735029f4cf1bee66563/raw/`;
 
 class CineStreamerApp {
   constructor() {
@@ -271,7 +313,7 @@ class CineStreamerApp {
 
     // Load Demo & Brasil Buttons
     this.elements.emptyDemoBtn.addEventListener('click', () => {
-      this.importM3UString(DEMO_PLAYLIST_CONTENT, 'Lista Demo Grátis (Canais & Filmes)');
+      this.importPlaylistString(DEMO_PLAYLIST_CONTENT, 'Lista Demo Grátis (Canais & Filmes)');
     });
 
     const emptyBrBtn = document.getElementById('empty-br-btn');
@@ -281,7 +323,7 @@ class CineStreamerApp {
           const res = await fetch('playlist_brasil.m3u');
           if (res.ok) {
             const text = await res.text();
-            this.importM3UString(text, 'Canais, Animes & Filmes BR');
+            this.importPlaylistString(text, 'Canais, Animes & Filmes BR');
           } else {
             this.showToast('Erro ao carregar lista do Brasil', 'error');
           }
@@ -310,7 +352,7 @@ class CineStreamerApp {
         const response = await fetch(fetchUrl);
         if (!response.ok) throw new Error(`Status ${response.status}`);
         const text = await response.text();
-        this.importM3UString(text, name || url, url);
+        this.importPlaylistString(text, name || url, url);
         closeModal(this.elements.playlistsModal);
         this.elements.formUrlPlaylist.reset();
       } catch (err) {
@@ -338,12 +380,12 @@ class CineStreamerApp {
       reader.onload = (event) => {
         const text = event.target.result;
         const name = this.elements.filePlaylistName.value.trim() || file.name.replace(/\.[^/.]+$/, '');
-        this.importM3UString(text, name);
+        this.importPlaylistString(text, name);
         closeModal(this.elements.playlistsModal);
         this.elements.playlistFileInput.value = '';
         this.elements.filePlaylistName.value = '';
         this.elements.btnLoadFile.disabled = true;
-        this.elements.fileDropZone.querySelector('h3').textContent = 'Arraste e solte o arquivo .m3u ou .m3u8 aqui';
+        this.elements.fileDropZone.querySelector('h3').textContent = 'Arraste e solte o arquivo .m3u, .m3u8 ou .json aqui';
       };
       reader.readAsText(file);
     });
@@ -365,11 +407,12 @@ class CineStreamerApp {
         const authData = await authRes.json();
 
         if (authData.user_info && authData.user_info.auth === 1) {
-          const m3uUrl = `${server}/get.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&type=m3u_plus&output=m3u8`;
-          const proxyM3uUrl = `${this.settings.corsProxy}${encodeURIComponent(m3uUrl)}`;
-          const m3uRes = await fetch(proxyM3uUrl);
-          const m3uText = await m3uRes.text();
-          this.importM3UString(m3uText, `Xtream: ${user}@${new URL(server).hostname}`);
+          // Import channels (live)
+          const liveUrl = `${server}/player_api.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&action=get_live_streams`;
+          const liveRes = await fetch(liveUrl);
+          const liveData = await liveRes.json();
+          this.importPlaylistString(JSON.stringify(liveData), `Xtream: ${user}@${new URL(server).hostname}`);
+          
           closeModal(this.elements.playlistsModal);
           this.elements.formXtream.reset();
         } else {
@@ -462,7 +505,7 @@ class CineStreamerApp {
         const res = await fetch('playlist_brasil.m3u');
         if (res.ok) {
           const text = await res.text();
-          this.importM3UString(text, 'Canais, Animes & Filmes BR');
+          this.importPlaylistString(text, 'Canais, Animes & Filmes BR');
           loaded = true;
         }
       } catch (e) {
@@ -470,7 +513,7 @@ class CineStreamerApp {
       }
 
       if (!loaded) {
-        this.importM3UString(DEMO_PLAYLIST_CONTENT, 'Canais, Animes & Filmes BR');
+        this.importPlaylistString(DEMO_PLAYLIST_CONTENT, 'Canais, Animes & Filmes BR');
       }
       return;
     }
@@ -501,6 +544,38 @@ class CineStreamerApp {
     this.renderCategoryList();
     this.renderItems();
     this.updateCounters();
+  }
+
+  parsePlaylist(content, name = 'Imported Playlist', sourceUrl = '') {
+    // Try to detect format
+    if (content.trim().startsWith('{') || content.trim().startsWith('[')) {
+      try {
+        const data = JSON.parse(content);
+        return this.parseJSONPlaylist(data, name, sourceUrl);
+      } catch (e) {
+        console.error('Failed to parse JSON, falling back to M3U', e);
+      }
+    }
+    return this.parseM3U(content);
+  }
+
+  parseJSONPlaylist(data, name, sourceUrl) {
+    const items = [];
+    // Assume basic JSON structure: array of objects { name, url, group, logo, type }
+    // Or Xtream codes API structure if detected
+    const list = Array.isArray(data) ? data : (data.vod_streams || data.live_streams || []);
+    
+    list.forEach(item => {
+      items.push({
+        id: 'item_' + Math.random().toString(36).substr(2, 9),
+        name: item.name || item.title || 'Sem nome',
+        url: item.stream_url || item.url || '',
+        logo: item.stream_icon || item.logo || '',
+        group: item.category_name || item.group || 'Geral',
+        type: item.type || (item.stream_type === 'movie' ? 'movie' : 'channel')
+      });
+    });
+    return items;
   }
 
   parseM3U(content) {
@@ -562,8 +637,8 @@ class CineStreamerApp {
     return items;
   }
 
-  importM3UString(content, name = 'Minha Lista', sourceUrl = '') {
-    const items = this.parseM3U(content);
+  importPlaylistString(content, name = 'Minha Lista', sourceUrl = '') {
+    const items = this.parsePlaylist(content, name, sourceUrl);
     if (!items.length) {
       this.showToast('Nenhum canal ou vídeo encontrado na lista.', 'error');
       return;
@@ -580,9 +655,9 @@ class CineStreamerApp {
     this.playlists.push(newPlaylist);
     this.activePlaylistId = newPlaylist.id;
     this.saveStorage(STORAGE_KEYS.PLAYLISTS, this.playlists);
-    localStorage.setItem(STORAGE_KEYS.ACTIVE_PLAYLIST_ID, newPlaylist.id);
+    localStorage.setItem(STORAGE_KEYS.ACTIVE_PLAYLIST_ID, this.activePlaylistId);
 
-    this.showToast(`Lista "${name}" importada com ${items.length} itens!`, 'success');
+    this.showToast(`Lista "${name}" importada com sucesso!`, 'success');
     this.loadActivePlaylist();
   }
 
@@ -822,7 +897,7 @@ class CineStreamerApp {
     this.elements.playerTitle.textContent = item.name;
     this.elements.playerGroup.textContent = item.group || 'Geral';
     this.elements.streamUrlPreview.textContent = item.url;
-    this.elements.playerVlcLink.href = item.url;
+    this.elements.playerVlcLink.href = 'vlc://' + item.url;
 
     this.updatePlayerFavState(item);
     this.addToHistory(item);
@@ -832,71 +907,58 @@ class CineStreamerApp {
 
     const video = this.elements.videoElement;
 
-    // Destroy existing HLS instance
+    // Destrói instância anterior
     if (this.hlsInstance) {
       this.hlsInstance.destroy();
       this.hlsInstance = null;
     }
 
-    const isHls = item.url.includes('.m3u8') || item.url.includes('hls');
+    // Tentar carregamento nativo (fluxo direto/rápido)
+    video.src = item.url;
+    video.load();
+    video.play().then(() => {
+      this.elements.playerLoader.classList.add('hidden');
+    }).catch(() => {
+      // Se o carregamento direto falhar, tenta via HLS.js
+      console.log('Falha no fluxo direto, alternando para HLS...');
+      this.setupHls(video, item);
+    });
+  }
 
-    if (isHls && Hls.isSupported()) {
-      const hls = new Hls({
-        enableWorker: true,
-        lowLatencyMode: true,
-        backBufferLength: 90
-      });
-
-      this.hlsInstance = hls;
-      hls.loadSource(item.url);
-      hls.attachMedia(video);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        this.elements.playerLoader.classList.add('hidden');
-        if (this.settings.autoplay) {
-          video.play().catch(e => console.log('Autoplay prevent:', e));
-        }
-      });
-
-      hls.on(Hls.Events.ERROR, (event, data) => {
-        if (data.fatal) {
-          switch (data.type) {
-            case Hls.ErrorTypes.NETWORK_ERROR:
-              // Try proxying if failed
-              if (!item.url.startsWith('http://localhost') && !item.url.includes('allorigins')) {
-                const proxyUrl = `${this.settings.corsProxy}${encodeURIComponent(item.url)}`;
-                console.log('Tentando via Proxy CORS HLS...', proxyUrl);
-                hls.loadSource(proxyUrl);
-                hls.startLoad();
-                return;
-              }
-              hls.startLoad();
-              break;
-            case Hls.ErrorTypes.MEDIA_ERROR:
-              hls.recoverMediaError();
-              break;
-            default:
-              this.showPlayerError();
-              hls.destroy();
-              break;
-          }
-        }
-      });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl') || !isHls) {
-      // Native MP4 / Safari HLS
-      video.src = item.url;
-      video.onloadeddata = () => {
-        this.elements.playerLoader.classList.add('hidden');
-        if (this.settings.autoplay) {
-          video.play().catch(e => console.log('Autoplay prevent:', e));
-        }
-      };
-      video.onerror = () => {
-        this.showPlayerError();
-      };
-    } else {
-      this.showPlayerError();
+  setupHls(video, item) {
+    if (this.hlsInstance) {
+      this.hlsInstance.destroy();
+      this.hlsInstance = null;
     }
+
+    const hls = new Hls({
+      enableWorker: true,
+      lowLatencyMode: true,
+      backBufferLength: 90
+    });
+
+    this.hlsInstance = hls;
+    hls.loadSource(item.url);
+    hls.attachMedia(video);
+
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      this.elements.playerLoader.classList.add('hidden');
+      video.play().catch(e => console.log('Autoplay prevent:', e));
+    });
+
+    hls.on(Hls.Events.ERROR, (event, data) => {
+      if (data.fatal) {
+        // Fallback de proxy se HLS falhar
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR && !item.url.includes('allorigins')) {
+          const proxyUrl = `${this.settings.corsProxy}${encodeURIComponent(item.url)}`;
+          hls.loadSource(proxyUrl);
+          hls.startLoad();
+        } else {
+          this.showPlayerError();
+          hls.destroy();
+        }
+      }
+    });
   }
 
   showPlayerError() {

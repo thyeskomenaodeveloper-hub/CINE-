@@ -1,25 +1,25 @@
 :root {
-  --bg-main: #0c0f17;
-  --bg-sidebar: #121722;
-  --bg-card: #19202e;
-  --bg-card-hover: #222c3f;
-  --bg-modal: #151b27;
-  --accent: #e50914;
-  --accent-hover: #f40612;
-  --accent-glow: rgba(229, 9, 20, 0.35);
+  --bg-main: #0a0a0c;
+  --bg-sidebar: #0f0f12;
+  --bg-card: #18181b;
+  --bg-card-hover: #27272a;
+  --bg-modal: #121214;
+  --accent: #8b5cf6;
+  --accent-hover: #7c3aed;
+  --accent-glow: rgba(139, 92, 246, 0.25);
   --blue: #3b82f6;
   --blue-hover: #2563eb;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --border: #263248;
-  --border-light: rgba(255, 255, 255, 0.08);
+  --text-main: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --border: #27272a;
+  --border-light: rgba(255, 255, 255, 0.05);
   --sidebar-width: 280px;
   --topbar-height: 72px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --transition: all 0.22s ease-in-out;
-  --font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 * {
@@ -469,21 +469,22 @@ button, input, select {
 }
 
 .stream-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
+  background: rgba(24, 24, 27, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   flex-direction: column;
   position: relative;
 }
 
 .stream-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
-  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--accent-glow);
+  border-color: rgba(139, 92, 246, 0.3);
 }
 
 .stream-card-poster {
@@ -526,22 +527,27 @@ button, input, select {
 .card-play-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .card-play-overlay i {
-  font-size: 2rem;
+  font-size: 3rem;
   color: #fff;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6));
+  transform: scale(0.8);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .stream-card:hover .card-play-overlay {
   opacity: 1;
+}
+
+.stream-card:hover .card-play-overlay i {
+  transform: scale(1);
 }
 
 .card-fav-btn {
