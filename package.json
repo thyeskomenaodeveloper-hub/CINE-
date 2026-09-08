@@ -1,0 +1,12 @@
+{
+  "name": "cine-streamer",
+  "version": "1.0.0",
+  "description": "Reprodutor e Leitor de Listas M3U, IPTV, Filmes e Séries",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": ["iptv", "m3u", "streamer", "cine", "player", "hls"],
+  "author": "",
+  "license": "MIT"
+}
