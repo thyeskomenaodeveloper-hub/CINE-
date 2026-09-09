@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest/dist/mpegts.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/shaka-player@latest/dist/shaka-player.compiled.js"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dark-theme">
@@ -109,16 +110,19 @@
               <i class="fa-solid fa-photo-film"></i>
             </div>
             <h2>Nenhuma lista carregada</h2>
-            <p>Importe sua lista M3U/M3U8 via URL, envie um arquivo local (.m3u) ou conecte via Xtream Codes para começar a assistir.</p>
+            <p>Importe sua lista M3U/M3U8 via URL, envie um arquivo local, conecte via Xtream Codes ou escolha uma das listas integradas para começar a assistir.</p>
             <div class="empty-actions">
-              <button class="btn btn-primary btn-lg" id="empty-add-btn">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Carregar Lista M3U
+              <button class="btn btn-primary btn-lg" id="empty-br-live-btn">
+                <i class="fa-solid fa-satellite-dish"></i> Carregar Canais Ao Vivo Brasil
               </button>
-              <button class="btn btn-secondary btn-lg" id="empty-br-btn">
-                <i class="fa-solid fa-tv"></i> Carregar Lista TV Brasil (Animes, Filmes, Esportes)
+              <button class="btn btn-secondary btn-lg" id="empty-br-vod-btn">
+                <i class="fa-solid fa-film"></i> Carregar Filmes, Séries & Animes BR
               </button>
               <button class="btn btn-secondary btn-lg" id="empty-demo-btn">
-                <i class="fa-solid fa-play"></i> Carregar Lista Demo Curta-Metragens
+                <i class="fa-solid fa-globe"></i> Carregar IPTV Global (IPTV-Org)
+              </button>
+              <button class="btn btn-outline btn-lg" id="empty-add-btn">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Importar Lista Própria (URL / Arquivo)
               </button>
             </div>
           </div>
@@ -165,11 +169,27 @@
           <h3 class="player-title" id="player-title">Carregando...</h3>
         </div>
         <div class="player-top-actions">
+          <select id="player-speed-select" class="custom-select player-select" title="Velocidade de reprodução">
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1.0x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2.0x</option>
+          </select>
+          <select id="player-quality-select" class="custom-select player-select hidden" title="Qualidade do vídeo">
+            <option value="auto">Auto Quality</option>
+          </select>
+          <button class="icon-btn" id="player-aspect-btn" title="Proporção da Tela (16:9, 4:3, Preencher)">
+            <i class="fa-solid fa-expand"></i>
+          </button>
           <button class="icon-btn" id="player-fav-btn" title="Favoritar">
             <i class="fa-regular fa-heart"></i>
           </button>
           <button class="icon-btn" id="player-pip-btn" title="Picture in Picture">
             <i class="fa-solid fa-clone"></i>
+          </button>
+          <button class="icon-btn" id="player-fullscreen-btn" title="Tela Cheia (F)">
+            <i class="fa-solid fa-maximize"></i>
           </button>
           <button class="icon-btn" id="player-external-btn" title="Abrir URL do fluxo direto">
             <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -188,13 +208,13 @@
         </div>
         <div class="player-error hidden" id="player-error">
           <i class="fa-solid fa-triangle-exclamation"></i>
-          <p id="player-error-msg">Não foi possível reproduzir este fluxo de mídia.</p>
+          <p id="player-error-msg">Este fluxo está protegendo a conexão. O player está tentando contornar as restrições automaticamente.</p>
           <div class="error-actions">
             <button class="btn btn-primary" id="player-retry-btn">
-              <i class="fa-solid fa-rotate-right"></i> Tentar Novamente
+              <i class="fa-solid fa-shield-halved"></i> Tentar Recuperação Forçada
             </button>
             <a class="btn btn-secondary" id="player-vlc-link" target="_blank" rel="noopener">
-              <i class="fa-solid fa-play"></i> Abrir no VLC / Externo
+              <i class="fa-solid fa-play"></i> Abrir no VLC / App
             </a>
           </div>
         </div>
@@ -225,12 +245,50 @@
       </div>
       <div class="modal-body">
         <div class="modal-tabs">
-          <button class="modal-tab active" data-target="tab-url">URL M3U / M3U8</button>
+          <button class="modal-tab active" data-target="tab-presets">Listas Prontas</button>
+          <button class="modal-tab" data-target="tab-url">URL M3U / M3U8</button>
           <button class="modal-tab" data-target="tab-file">Arquivo Local</button>
           <button class="modal-tab" data-target="tab-xtream">Xtream Codes</button>
         </div>
 
-        <div class="tab-panel active" id="tab-url">
+        <div class="tab-panel active" id="tab-presets">
+          <div class="presets-grid">
+            <div class="preset-card">
+              <div class="preset-icon"><i class="fa-solid fa-satellite-dish"></i></div>
+              <div class="preset-details">
+                <h4>Canais Ao Vivo Brasil</h4>
+                <p>Transmissões de TV aberta, canais regionais, jornalismo e esportes.</p>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-load-preset-live">
+                <i class="fa-solid fa-play"></i> Carregar
+              </button>
+            </div>
+
+            <div class="preset-card">
+              <div class="preset-icon"><i class="fa-solid fa-film"></i></div>
+              <div class="preset-details">
+                <h4>Filmes, Séries & Animes BR</h4>
+                <p>Acervo com mais de 9.000 títulos organizados em categorias e lançamentos.</p>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-load-preset-vod">
+                <i class="fa-solid fa-play"></i> Carregar
+              </button>
+            </div>
+
+            <div class="preset-card">
+              <div class="preset-icon"><i class="fa-solid fa-globe"></i></div>
+              <div class="preset-details">
+                <h4>IPTV-Org Global</h4>
+                <p>Canais abertos internacionais categorizados por esportes, notícias e cultura.</p>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-load-preset-global">
+                <i class="fa-solid fa-play"></i> Carregar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="tab-url">
           <form id="form-url-playlist">
             <div class="form-group">
               <label for="url-name">Nome da Lista</label>
@@ -336,6 +394,21 @@
             <input type="checkbox" id="setting-autoplay" checked />
             <span class="slider"></span>
           </label>
+        </div>
+        <div class="setting-item">
+          <div>
+            <h4>Backup e Restauração de Dados</h4>
+            <p class="text-muted">Exporte ou importe seus Favoritos, Histórico e Listas Salvas.</p>
+          </div>
+          <div class="setting-actions">
+            <button class="btn btn-secondary btn-sm" id="btn-export-data">
+              <i class="fa-solid fa-download"></i> Exportar
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-import-data">
+              <i class="fa-solid fa-upload"></i> Importar
+            </button>
+            <input type="file" id="import-data-file" accept=".json" class="hidden" />
+          </div>
         </div>
         <div class="setting-item">
           <div>

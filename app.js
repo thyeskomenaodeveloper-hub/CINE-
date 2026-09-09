@@ -7,7 +7,8 @@ const STORAGE_KEYS = {
   ACTIVE_PLAYLIST_ID: 'cine_active_pl_id',
   FAVORITES: 'cine_favorites',
   HISTORY: 'cine_history',
-  SETTINGS: 'cine_settings'
+  SETTINGS: 'cine_settings',
+  PROGRESS: 'cine_progress'
 };
 
 const DEFAULT_SETTINGS = {
@@ -103,6 +104,9 @@ class CineStreamerApp {
 
     this.currentStreamIndex = -1;
     this.hlsInstance = null;
+    this.mpegtsInstance = null;
+    this.aspectModeIndex = 0;
+    this.aspectModes = ['fit-contain', 'fit-cover', 'fit-fill'];
 
     this.initElements();
     this.bindEvents();
@@ -158,6 +162,9 @@ class CineStreamerApp {
       videoElement: document.getElementById('video-element'),
       playerTitle: document.getElementById('player-title'),
       playerGroup: document.getElementById('player-group'),
+      playerQualitySelect: document.getElementById('player-quality-select'),
+      playerAspectBtn: document.getElementById('player-aspect-btn'),
+      playerFullscreenBtn: document.getElementById('player-fullscreen-btn'),
       playerFavBtn: document.getElementById('player-fav-btn'),
       playerPipBtn: document.getElementById('player-pip-btn'),
       playerExternalBtn: document.getElementById('player-external-btn'),
@@ -178,6 +185,11 @@ class CineStreamerApp {
       quickAddBtn: document.getElementById('quick-add-btn'),
       emptyAddBtn: document.getElementById('empty-add-btn'),
       emptyDemoBtn: document.getElementById('empty-demo-btn'),
+      emptyBrLiveBtn: document.getElementById('empty-br-live-btn'),
+      emptyBrVodBtn: document.getElementById('empty-br-vod-btn'),
+      btnLoadPresetLive: document.getElementById('btn-load-preset-live'),
+      btnLoadPresetVod: document.getElementById('btn-load-preset-vod'),
+      btnLoadPresetGlobal: document.getElementById('btn-load-preset-global'),
       modalCloseBtns: document.querySelectorAll('.modal-close, .modal-backdrop'),
 
       // Forms
@@ -202,11 +214,11 @@ class CineStreamerApp {
       // Settings Inputs
       settingCorsProxy: document.getElementById('setting-cors-proxy'),
       settingPageSize: document.getElementById('setting-page-size'),
-      settingAutoplay: document.getElementById('setting-autoplay'),
-      btnClearData: document.getElementById('btn-clear-data'),
-      toastContainer: document.getElementById('toast-container')
-    };
-  }
+       settingAutoplay: document.getElementById('setting-autoplay'),
+       btnClearData: document.getElementById('btn-clear-data'),
+       toastContainer: document.getElementById('toast-container')
+     };
+   }
 
   bindEvents() {
     // Menu mobile
@@ -311,25 +323,47 @@ class CineStreamerApp {
       });
     });
 
-    // Load Demo & Brasil Buttons
-    this.elements.emptyDemoBtn.addEventListener('click', () => {
-      this.importPlaylistString(DEMO_PLAYLIST_CONTENT, 'Lista Demo Grátis (Canais & Filmes)');
-    });
-
-    const emptyBrBtn = document.getElementById('empty-br-btn');
-    if (emptyBrBtn) {
-      emptyBrBtn.addEventListener('click', async () => {
-        try {
-          const res = await fetch('playlist_brasil.m3u');
-          if (res.ok) {
-            const text = await res.text();
-            this.importPlaylistString(text, 'Canais, Animes & Filmes BR');
-          } else {
-            this.showToast('Erro ao carregar lista do Brasil', 'error');
-          }
-        } catch (e) {
-          this.showToast('Erro ao carregar lista do Brasil', 'error');
+    // Preset buttons in empty state & modal
+    const loadPresetFile = async (filePath, title) => {
+      try {
+        this.showToast(`Carregando ${title}...`, 'info');
+        const res = await fetch(filePath);
+        if (res.ok) {
+          const text = await res.text();
+          this.importPlaylistString(text, title);
+          closeModal(this.elements.playlistsModal);
+        } else {
+          this.showToast(`Erro ao carregar ${title}`, 'error');
         }
+      } catch (e) {
+        console.error(e);
+        this.showToast(`Falha ao obter lista: ${e.message}`, 'error');
+      }
+    };
+
+    if (this.elements.emptyBrLiveBtn) {
+      this.elements.emptyBrLiveBtn.addEventListener('click', () => loadPresetFile('brazil.m3u', 'Canais Ao Vivo Brasil'));
+    }
+    if (this.elements.btnLoadPresetLive) {
+      this.elements.btnLoadPresetLive.addEventListener('click', () => loadPresetFile('brazil.m3u', 'Canais Ao Vivo Brasil'));
+    }
+
+    if (this.elements.emptyBrVodBtn) {
+      this.elements.emptyBrVodBtn.addEventListener('click', () => loadPresetFile('playlist_brasil.m3u', 'Filmes, Séries & Animes BR'));
+    }
+    if (this.elements.btnLoadPresetVod) {
+      this.elements.btnLoadPresetVod.addEventListener('click', () => loadPresetFile('playlist_brasil.m3u', 'Filmes, Séries & Animes BR'));
+    }
+
+    if (this.elements.emptyDemoBtn) {
+      this.elements.emptyDemoBtn.addEventListener('click', () => {
+        this.importPlaylistString(DEMO_PLAYLIST_CONTENT, 'IPTV-Org Global');
+      });
+    }
+    if (this.elements.btnLoadPresetGlobal) {
+      this.elements.btnLoadPresetGlobal.addEventListener('click', () => {
+        this.importPlaylistString(DEMO_PLAYLIST_CONTENT, 'IPTV-Org Global');
+        closeModal(this.elements.playlistsModal);
       });
     }
 
@@ -446,6 +480,36 @@ class CineStreamerApp {
       }
     });
 
+    if (this.elements.playerAspectBtn) {
+      this.elements.playerAspectBtn.addEventListener('click', () => {
+        this.aspectModeIndex = (this.aspectModeIndex + 1) % this.aspectModes.length;
+        const currentMode = this.aspectModes[this.aspectModeIndex];
+        this.elements.videoElement.className = currentMode;
+        this.showToast(`Proporção de vídeo: ${currentMode.replace('fit-', '').toUpperCase()}`, 'info');
+      });
+    }
+
+    if (this.elements.playerFullscreenBtn) {
+      this.elements.playerFullscreenBtn.addEventListener('click', () => {
+        const videoWrap = this.elements.videoElement.closest('.video-wrapper') || this.elements.videoElement;
+        if (!document.fullscreenElement) {
+          if (videoWrap.requestFullscreen) videoWrap.requestFullscreen();
+          else if (videoWrap.webkitRequestFullscreen) videoWrap.webkitRequestFullscreen();
+        } else {
+          if (document.exitFullscreen) document.exitFullscreen();
+        }
+      });
+    }
+
+    if (this.elements.playerQualitySelect) {
+      this.elements.playerQualitySelect.addEventListener('change', (e) => {
+        if (this.hlsInstance) {
+          const val = e.target.value;
+          this.hlsInstance.currentLevel = val === 'auto' ? -1 : parseInt(val, 10);
+        }
+      });
+    }
+
     this.elements.playerPipBtn.addEventListener('click', async () => {
       try {
         if (document.pictureInPictureElement) {
@@ -467,19 +531,97 @@ class CineStreamerApp {
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
+      const isPlayerOpen = !this.elements.playerOverlay.classList.contains('hidden');
+
       if (e.key === 'Escape') {
-        if (!this.elements.playerOverlay.classList.contains('hidden')) {
+        if (isPlayerOpen) {
           this.closePlayer();
         }
         document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'));
+        return;
+      }
+
+      // Player specific shortcuts if overlay is active
+      if (isPlayerOpen) {
+        const video = this.elements.videoElement;
+        const target = e.target;
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') return;
+
+        if (e.code === 'Space') {
+          e.preventDefault();
+          if (video.paused) video.play();
+          else video.pause();
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          video.currentTime = Math.max(0, video.currentTime - 10);
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          video.currentTime = Math.min(video.duration || 0, video.currentTime + 10);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          video.volume = Math.min(1, video.volume + 0.1);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          video.volume = Math.max(0, video.volume - 0.1);
+        } else if (e.key === 'f' || e.key === 'F') {
+          e.preventDefault();
+          if (this.elements.playerFullscreenBtn) this.elements.playerFullscreenBtn.click();
+        } else if (e.key === 'm' || e.key === 'M') {
+          e.preventDefault();
+          video.muted = !video.muted;
+          this.showToast(video.muted ? 'Áudio Mudo' : 'Áudio Ativado', 'info');
+        }
       }
     });
 
-    // Settings save
-    this.elements.settingCorsProxy.addEventListener('change', (e) => {
-      this.settings.corsProxy = e.target.value.trim();
-      this.saveStorage(STORAGE_KEYS.SETTINGS, this.settings);
-    });
+    // Backup & Restore
+    const btnExport = document.getElementById('btn-export-data');
+    if (btnExport) {
+      btnExport.onclick = () => {
+        const backupData = {
+          playlists: this.playlists,
+          activePlaylistId: this.activePlaylistId,
+          favorites: this.favorites,
+          history: this.history,
+          settings: this.settings,
+          progress: this.loadStorage(STORAGE_KEYS.PROGRESS, {})
+        };
+        const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `cine_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        this.showToast('Backup exportado com sucesso!', 'success');
+      };
+    }
+
+    const btnImport = document.getElementById('btn-import-data');
+    const importFile = document.getElementById('import-data-file');
+    if (btnImport && importFile) {
+      btnImport.onclick = () => importFile.click();
+      importFile.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          try {
+            const data = JSON.parse(evt.target.result);
+            if (data.playlists) localStorage.setItem(STORAGE_KEYS.PLAYLISTS, JSON.stringify(data.playlists));
+            if (data.activePlaylistId) localStorage.setItem(STORAGE_KEYS.ACTIVE_PLAYLIST_ID, data.activePlaylistId);
+            if (data.favorites) localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(data.favorites));
+            if (data.history) localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(data.history));
+            if (data.settings) localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(data.settings));
+            if (data.progress) localStorage.setItem(STORAGE_KEYS.PROGRESS, JSON.stringify(data.progress));
+            
+            this.showToast('Dados restaurados com sucesso! Recarregando...', 'success');
+            setTimeout(() => location.reload(), 1200);
+          } catch (err) {
+            this.showToast('Erro ao ler arquivo de backup.', 'error');
+          }
+        };
+        reader.readAsText(file);
+      };
+    }
     this.elements.settingPageSize.addEventListener('change', (e) => {
       this.settings.pageSize = parseInt(e.target.value, 10) || 60;
       this.saveStorage(STORAGE_KEYS.SETTINGS, this.settings);
@@ -499,21 +641,30 @@ class CineStreamerApp {
   }
 
   async initApp() {
-    if (!this.playlists.length) {
-      let loaded = false;
-      try {
-        const res = await fetch('playlist_brasil.m3u');
-        if (res.ok) {
-          const text = await res.text();
-          this.importPlaylistString(text, 'Canais, Animes & Filmes BR');
-          loaded = true;
-        }
-      } catch (e) {
-        console.log('Tentando fallback local...', e);
-      }
+    // Lista de arquivos locais que devem ser carregados obrigatoriamente
+    const arquivosLocais = [
+      { path: 'brazil.m3u', name: 'Canais Ao Vivo Brasil' },
+      { path: 'playlist_brasil.m3u', name: 'Filmes, Séries & Animes BR' }
+    ];
 
-      if (!loaded) {
-        this.importPlaylistString(DEMO_PLAYLIST_CONTENT, 'Canais, Animes & Filmes BR');
+    if (!this.playlists.length) {
+      this.showToast('Carregando listas locais do sistema...', 'info');
+      
+      for (const arquivo of arquivosLocais) {
+        try {
+          const res = await fetch(arquivo.path);
+          if (res.ok) {
+            const text = await res.text();
+            this.importPlaylistString(text, arquivo.name);
+          }
+        } catch (e) {
+          console.error(`Erro ao carregar ${arquivo.path}:`, e);
+        }
+      }
+      
+      // Fallback global caso algum arquivo falhe
+      if (!this.playlists.length) {
+         this.importPlaylistString(DEMO_PLAYLIST_CONTENT, 'IPTV-Org Global');
       }
       return;
     }
@@ -783,12 +934,18 @@ class CineStreamerApp {
     }
 
     const favSet = new Set(this.favorites.map(f => f.url));
+    const progressData = this.loadStorage(STORAGE_KEYS.PROGRESS, {});
 
     let html = '';
     paginatedItems.forEach((item, idx) => {
       const globalIndex = start + idx;
       const isFav = favSet.has(item.url);
       const isVod = item.type === 'movie' || item.type === 'series';
+      const progress = progressData[item.url] || { percent: 0 };
+      
+      const progressBar = (isVod && progress.percent > 2)
+        ? `<div class="progress-bar-container"><div class="progress-bar-fill" style="width: ${progress.percent}%"></div></div>`
+        : '';
 
       const logoHtml = item.logo
         ? `<img src="${this.escapeHtml(item.logo)}" alt="${this.escapeHtml(item.name)}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
@@ -799,6 +956,7 @@ class CineStreamerApp {
         <div class="stream-card ${isVod ? 'is-vod' : ''}" data-index="${globalIndex}">
           <div class="stream-card-poster">
             ${logoHtml}
+            ${progressBar}
             <div class="card-play-overlay">
               <i class="fa-solid fa-circle-play"></i>
             </div>
@@ -913,16 +1071,60 @@ class CineStreamerApp {
       this.hlsInstance = null;
     }
 
-    // Tentar carregamento nativo (fluxo direto/rápido)
+    // Speed select listener
+    const speedSelect = document.getElementById('player-speed-select');
+    if (speedSelect) {
+      speedSelect.onchange = (e) => {
+        this.elements.videoElement.playbackRate = parseFloat(e.target.value);
+      };
+    }
+
+    // Save progress on timeupdate
+    this.elements.videoElement.ontimeupdate = () => {
+      const v = this.elements.videoElement;
+      if (v.duration && !isNaN(v.duration)) {
+        const percent = (v.currentTime / v.duration) * 100;
+        if (percent > 1 && percent < 98) {
+          const progressData = this.loadStorage(STORAGE_KEYS.PROGRESS, {});
+          progressData[item.url] = {
+            currentTime: v.currentTime,
+            duration: v.duration,
+            percent: Math.round(percent)
+          };
+          this.saveStorage(STORAGE_KEYS.PROGRESS, progressData);
+        }
+      }
+    };
+
+    // Tentar carregamento nativo prioritário (fluxo direto)
     video.src = item.url;
     video.load();
-    video.play().then(() => {
-      this.elements.playerLoader.classList.add('hidden');
-    }).catch(() => {
-      // Se o carregamento direto falhar, tenta via HLS.js
-      console.log('Falha no fluxo direto, alternando para HLS...');
-      this.setupHls(video, item);
-    });
+    
+    video.oncanplay = () => {
+        this.elements.playerLoader.classList.add('hidden');
+        video.play().catch(e => {
+            console.log("Reprodução nativa precisa de fallback, acionando engines...");
+            this.acelerarFluxo(item);
+        });
+    };
+
+    video.onerror = () => {
+        this.acelerarFluxo(item);
+    };
+  }
+
+  acelerarFluxo(item) {
+    // Se for link complexo, força o uso do proxy configurado nas configurações para evitar bloqueio CORS
+    if (item.url.includes('stitcher-ipv4.pluto.tv') || item.url.includes('samsung')) {
+        const proxyUrl = `${this.settings.corsProxy}${encodeURIComponent(item.url)}`;
+        this.setupShakaPlayer(this.elements.videoElement, proxyUrl);
+    } else if (item.url.includes('.m3u8')) {
+        this.setupHls(this.elements.videoElement, item);
+    } else if (item.url.includes('.ts')) {
+        this.setupMpegTs(this.elements.videoElement, item);
+    } else {
+        this.setupShakaPlayer(this.elements.videoElement, item.url);
+    }
   }
 
   setupHls(video, item) {
@@ -930,40 +1132,87 @@ class CineStreamerApp {
       this.hlsInstance.destroy();
       this.hlsInstance = null;
     }
-
-    const hls = new Hls({
-      enableWorker: true,
-      lowLatencyMode: true,
-      backBufferLength: 90
-    });
-
-    this.hlsInstance = hls;
-    hls.loadSource(item.url);
-    hls.attachMedia(video);
-
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      this.elements.playerLoader.classList.add('hidden');
-      video.play().catch(e => console.log('Autoplay prevent:', e));
-    });
-
-    hls.on(Hls.Events.ERROR, (event, data) => {
-      if (data.fatal) {
-        // Fallback de proxy se HLS falhar
-        if (data.type === Hls.ErrorTypes.NETWORK_ERROR && !item.url.includes('allorigins')) {
-          const proxyUrl = `${this.settings.corsProxy}${encodeURIComponent(item.url)}`;
-          hls.loadSource(proxyUrl);
-          hls.startLoad();
-        } else {
-          this.showPlayerError();
-          hls.destroy();
-        }
-      }
-    });
+    this.hlsInstance = new Hls();
+    this.hlsInstance.loadSource(item.url);
+    this.hlsInstance.attachMedia(video);
+    this.hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => video.play());
   }
 
-  showPlayerError() {
+  setupMpegTs(video, item) {
+    if (this.mpegtsInstance) {
+      this.mpegtsInstance.destroy();
+      this.mpegtsInstance = null;
+    }
+    this.mpegtsInstance = mpegts.createPlayer({
+      type: 'mpegts',
+      url: item.url
+    });
+    this.mpegtsInstance.attachMediaElement(video);
+    this.mpegtsInstance.load();
+    this.mpegtsInstance.play().then(() => this.elements.playerLoader.classList.add('hidden')).catch(() => this.showPlayerError(item.url));
+  }
+
+  showPlayerError(url) {
     this.elements.playerLoader.classList.add('hidden');
     this.elements.playerError.classList.remove('hidden');
+    
+    // Configurar ações de erro
+    const retryBtn = this.elements.playerRetryBtn;
+    if (retryBtn) {
+      retryBtn.onclick = () => {
+        this.elements.playerLoader.classList.remove('hidden');
+        this.elements.playerError.classList.add('hidden');
+        
+        // Tentativa final: Tentar forçar o Shaka Player mesmo com erro de CORS
+        try {
+            this.setupShakaPlayer(this.elements.videoElement, url);
+        } catch (e) {
+            // Se falhar, tenta via Proxy obrigatoriamente
+            const proxyUrl = `${this.settings.corsProxy}${encodeURIComponent(url)}`;
+            this.elements.videoElement.src = proxyUrl;
+            this.elements.videoElement.load();
+            this.elements.videoElement.play().then(() => {
+                this.elements.playerLoader.classList.add('hidden');
+            }).catch(() => {
+                this.elements.playerLoader.classList.add('hidden');
+                this.elements.playerError.classList.remove('hidden');
+                this.showToast('Erro persistente no servidor do canal.', 'error');
+            });
+        }
+      };
+    }
+    
+    const vlcLink = document.getElementById('player-vlc-link');
+    if (vlcLink) {
+      vlcLink.href = 'vlc://' + url;
+    }
+  }
+
+  setupShakaPlayer(video, url) {
+    if (this.shakaPlayer) {
+      this.shakaPlayer.destroy();
+    }
+    const player = new shaka.Player(video);
+    this.shakaPlayer = player;
+
+    // Configuração avançada para fluxos complexos como Pluto/Samsung
+    player.configure({
+        streaming: {
+            retryParameters: { maxAttempts: 5 }
+        },
+        manifest: {
+            retryParameters: { maxAttempts: 5 }
+        }
+    });
+
+    player.addEventListener('error', (event) => {
+      console.error('Shaka Player Error:', event);
+      this.showPlayerError(url);
+    });
+
+    player.load(url).then(() => {
+      this.elements.playerLoader.classList.add('hidden');
+    }).catch(() => this.showPlayerError(url));
   }
 
   closePlayer() {
@@ -971,6 +1220,14 @@ class CineStreamerApp {
     if (this.hlsInstance) {
       this.hlsInstance.destroy();
       this.hlsInstance = null;
+    }
+    if (this.mpegtsInstance) {
+      this.mpegtsInstance.destroy();
+      this.mpegtsInstance = null;
+    }
+    if (this.shakaPlayer) {
+      this.shakaPlayer.destroy();
+      this.shakaPlayer = null;
     }
     this.elements.videoElement.pause();
     this.elements.videoElement.removeAttribute('src');
